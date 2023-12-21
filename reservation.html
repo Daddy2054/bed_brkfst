@@ -20,6 +20,13 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.1.2/dist/css/datepicker-bs4.min.css"
     />
+
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://unpkg.com/notie/dist/notie.min.css"
+    />
+
     <style>
       .my-footer {
         height: 5em;
@@ -170,6 +177,8 @@
       crossorigin="anonymous"
     ></script>
     <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.1.2/dist/js/datepicker-full.min.js"></script>
+    <script src="https://unpkg.com/notie"></script>
+
     <script>
       console.log("I am printing from javascript");
 
@@ -202,19 +211,20 @@
       document
         .getElementById("colorButton")
         .addEventListener("click", function () {
-          let myEl = document.getElementById("myParagraph");
-
-          if (myEl.classList.contains("redText")) {
-            myEl.classList.remove("redText");
-          } else {
-            myEl.classList.add("redText");
-          }
+          notify("This is my message", "warning");
         });
 
       const elem = document.getElementById("reservation-dates");
       const rangePicker = new DateRangePicker(elem, {
         format: "yyyy-mm-dd",
       });
+
+      function notify(msg, msgType) {
+        notie.alert({
+          type: msgType,
+          text: msg,
+        });
+      }
     </script>
   </body>
 </html>
