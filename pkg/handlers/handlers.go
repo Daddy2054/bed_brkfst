@@ -89,7 +89,7 @@ type jsonResponse struct {
 // AvailabilityJSON handles request for availability and sends JSON response
 func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 	resp := jsonResponse{
-		OK:      false,
+		OK:      true,
 		Message: "Available!",
 	}
 

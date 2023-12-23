@@ -7,7 +7,7 @@
 
         <div class="row">
             <div class="col">
-                <img src="/static/images/generals-quarters.png"
+                <img src="/static/images/generals-quarters.jpg"
                      class="img-fluid img-thumbnail mx-auto d-block room-image" alt="room image">
             </div>
         </div>
@@ -74,6 +74,17 @@
         attention.custom({
             title: 'Choose your dates',
             msg: html,
+            callback: function(result) {
+                console.log("called");
+
+                fetch('/search-availability-json')
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        console.log(data.ok);
+                        console.log(data.message);
+                    })
+            }
         });
     })
 </script>
