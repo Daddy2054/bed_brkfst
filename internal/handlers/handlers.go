@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	"bed_brkfst/pkg/config"
-	"bed_brkfst/pkg/models"
-	"bed_brkfst/pkg/render"
+	"bed_brkfst/internal/config"
+	"bed_brkfst/internal/models"
+	"bed_brkfst/internal/render"
 	"encoding/json"
 	"fmt"
 	"log"

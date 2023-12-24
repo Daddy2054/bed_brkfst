@@ -1,8 +1,8 @@
 package render
 
 import (
-	"bed_brkfst/pkg/config"
-	"bed_brkfst/pkg/models"
+	"bed_brkfst/internal/config"
+	"bed_brkfst/internal/models"
 	"bytes"
 	"fmt"
 	"html/template"

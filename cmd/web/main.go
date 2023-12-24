@@ -1,9 +1,9 @@
 package main
 
 import (
-	"bed_brkfst/pkg/config"
-	"bed_brkfst/pkg/handlers"
-	"bed_brkfst/pkg/render"
+	"bed_brkfst/internal/config"
+	"bed_brkfst/internal/handlers"
+	"bed_brkfst/internal/render"
 	"fmt"
 	"log"
 	"net/http"

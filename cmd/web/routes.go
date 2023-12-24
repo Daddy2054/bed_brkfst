@@ -1,8 +1,8 @@
 package main
 
 import (
-	"bed_brkfst/pkg/config"
-	"bed_brkfst/pkg/handlers"
+	"bed_brkfst/internal/config"
+	"bed_brkfst/internal/handlers"
 	"net/http"
 
 	"github.com/go-chi/chi"
