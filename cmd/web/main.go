@@ -3,12 +3,14 @@ package main
 import (
 	"bed_brkfst/internal/config"
 	"bed_brkfst/internal/handlers"
+	"bed_brkfst/internal/helpers"
 	"bed_brkfst/internal/models"
 	"bed_brkfst/internal/render"
 	"encoding/gob"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/alexedwards/scs/v2"
@@ -19,7 +21,8 @@ const portNumber = ":8080"
 
 var app config.AppConfig
 var session *scs.SessionManager
-
+var infoLog *log.Logger
+var errorLog *log.Logger
 // main is the main function
 func main() {
 	err := run()
@@ -47,6 +50,12 @@ func run() error {
 	// change this to true when in production
 	app.InProduction = false
 
+	infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	app.InfoLog = infoLog
+
+	errorLog = log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	app.ErrorLog = errorLog
+
 	// set up the session
 	session = scs.New()
 	session.Lifetime = 24 * time.Hour
@@ -69,5 +78,7 @@ func run() error {
 	handlers.NewHandlers(repo)
 
 	render.NewTemplates(&app)
+	helpers.NewHelpers(&app)
+	
 	return nil
 }
