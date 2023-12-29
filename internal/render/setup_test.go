@@ -1,14 +1,16 @@
 package render
 
 import (
-	"encoding/gob"
-	"github.com/alexedwards/scs/v2"
 	"bed_brkfst/internal/config"
 	"bed_brkfst/internal/models"
+	"encoding/gob"
+	"log"
 	"net/http"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/alexedwards/scs/v2"
 )
 
 var session *scs.SessionManager
@@ -17,6 +19,12 @@ var testApp config.AppConfig
 func TestMain(m *testing.M) {
 
 	gob.Register(models.Reservation{})
+
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	testApp.InfoLog = infoLog
+
+	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	testApp.ErrorLog = errorLog
 
 	// change this to true when in production
 	testApp.InProduction = false
