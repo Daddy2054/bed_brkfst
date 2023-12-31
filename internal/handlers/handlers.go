@@ -124,8 +124,7 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// newReservationID, 
-	err = m.DB.InsertReservation(reservation)
+	newReservationID, err := m.DB.InsertReservation(reservation)
 	if err != nil {
 		helpers.ServerError(w, err)
 		// m.App.Session.Put(r.Context(), "error", "can't insert reservation into database!")
@@ -133,20 +132,21 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// restriction := models.RoomRestriction{
-	// 	StartDate:     startDate,
-	// 	EndDate:       endDate,
-	// 	RoomID:        roomID,
-	// 	// ReservationID: newReservationID,
-	// 	RestrictionID: 1,
-	// }
+	restriction := models.RoomRestriction{
+		StartDate:     startDate,
+		EndDate:       endDate,
+		RoomID:        roomID,
+		ReservationID: newReservationID,
+		RestrictionID: 1,
+	}
 
-	// err = m.DB.InsertRoomRestriction(restriction)
-	// if err != nil {
-	// 	m.App.Session.Put(r.Context(), "error", "can't insert room restriction!")
-	// 	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-	// 	return
-	// }
+	err = m.DB.InsertRoomRestriction(restriction)
+	if err != nil {
+		helpers.ServerError(w, err)
+		// m.App.Session.Put(r.Context(), "error", "can't insert room restriction!")
+		// http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		return
+	}
 
 	m.App.Session.Put(r.Context(), "reservation", reservation)
 	http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
