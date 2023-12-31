@@ -2,10 +2,13 @@ package handlers
 
 import (
 	"bed_brkfst/internal/config"
+	"bed_brkfst/internal/driver"
 	"bed_brkfst/internal/forms"
 	"bed_brkfst/internal/helpers"
 	"bed_brkfst/internal/models"
 	"bed_brkfst/internal/render"
+	"bed_brkfst/internal/repository"
+	"bed_brkfst/internal/repository/dbrepo"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -18,12 +21,14 @@ var Repo *Repository
 // Repository is the repository type
 type Repository struct {
 	App *config.AppConfig
+	DB  repository.DatabaseRepo
 }
 
 // NewRepo creates a new repository
-func NewRepo(a *config.AppConfig) *Repository {
+func NewRepo(a *config.AppConfig, db *driver.DB) *Repository {
 	return &Repository{
 		App: a,
+		DB:  dbrepo.NewPostgresRepo(db.SQL, a),
 	}
 }
 
@@ -42,8 +47,7 @@ func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 
 	// send data to the template
-	render.RenderTemplate(w, r, "about.page.tmpl", &models.TemplateData{
-	})
+	render.RenderTemplate(w, r, "about.page.tmpl", &models.TemplateData{})
 }
 
 // Reservation renders the make a reservation page and displays form
