@@ -150,7 +150,7 @@
                 title: title,
                 html: text,
                 icon: icon,
-                confirmButtonText: confirmationButtonText
+                confirmButtonText: confirmationButtonText,
             })
         }
 
@@ -226,16 +226,20 @@
 
             async function custom(c) {
                 const {
-                    msg = "",
-                    title = "",
-                } = c;
+            icon = "",
+            msg = "",
+            title = "",
+            showConfirmButton = true,
+        } = c;
 
                 const {value: result} = await Swal.fire({
-                    title: title,
-                    html: msg,
-                    backdrop: false,
-                    focusConfirm: false,
-                    showCancelButton: true,
+                    icon: icon,
+            title: title,
+            html: msg,
+            backdrop: false,
+            focusConfirm: false,
+            showCancelButton: true,
+            showConfirmButton: showConfirmButton,
                     willOpen: () => {
                         if (c.willOpen !== undefined) {
                             c.willOpen();
