@@ -1,3 +1,14 @@
 {
-    "livePreview.defaultPreviewPath": "/static/index.html"
+    "livePreview.defaultPreviewPath": "/static/index.html",
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "bed_brkfst",
+            "database": "bed_brkfst",
+            "username": "postgres"
+        }
+    ]
 }
