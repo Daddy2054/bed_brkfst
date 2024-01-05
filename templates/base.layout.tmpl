@@ -24,9 +24,9 @@
                 border-color: #6c757d;
             }
 
-            p {
+            /* p {
 
-            }
+            } */
 
             .paraClass {
                 font-size: 3em;
@@ -70,10 +70,19 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/search-availability">Book Now</a>
+                    <a class="nav-link" href="/search-availability"
+                    tabindex="-1" aria-disabled="true"
+                    >Book Now</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/contact">Contact</a>
+                    <a class="nav-link" href="/contact"
+                    tabindex="-1" aria-disabled="true"
+                    >Contact</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/user/login"
+                    tabindex="-1" aria-disabled="true"
+                    >Login</a>
                 </li>
 
             </ul>
@@ -155,17 +164,17 @@
             })
         }
 
-        {{with .Error}}
-            notify("{{.}}", "error");
-        {{end}}
+        // {{with .Error}}
+        //     notify("{{.}}", "error");
+        // {{end}}
 
-        {{with .Flash}}
-        notify("{{.}}", "success");
-        {{end}}
+        // {{with .Flash}}
+        // notify("{{.}}", "success");
+        // {{end}}
 
-        {{with .Warning}}
-        notify("{{.}}", "warning");
-        {{end}}
+        // {{with .Warning}}
+        // notify("{{.}}", "warning");
+        // {{end}}
 
         function Prompt() {
             let toast = function (c) {
