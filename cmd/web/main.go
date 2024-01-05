@@ -11,7 +11,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/smtp"
 	"os"
 	"time"
 
@@ -32,15 +31,27 @@ func main() {
 		log.Fatal(err)
 	}
 	defer db.SQL.Close()
+	defer close(app.MailChan)
 
-	from := "me@here.com"
-	auth := smtp.PlainAuth("", from, "", "localhost")
-	err = smtp.SendMail("localhost:1025", auth, from, []string{"you@there.com"}, []byte("Hello, world!"))
-	if err != nil {
-		log.Println(err)
-	}
+	fmt.Println("Starting mail listener... ")
+	listenForMail()
+	// msg := models.MailData{
+	// 	To:      "john@do.ca",
+	// 	From:    "me@here.com",
+	// 	Subject: "Some subject",
+	// 	Content: "",
+	// }
 
-	fmt.Printf("Staring application on port %s\n", portNumber)
+	// app.MailChan <-msg
+
+	// from := "me@here.com"
+	// auth := smtp.PlainAuth("", from, "", "localhost")
+	// err = smtp.SendMail("localhost:1025", auth, from, []string{"you@there.com"}, []byte("Hello, world!"))
+	// if err != nil {
+	// 	log.Println(err)
+	// }
+
+	fmt.Printf("Starting application on port %s\n", portNumber)
 
 	srv := &http.Server{
 		Addr:    portNumber,
@@ -59,6 +70,9 @@ func run() (*driver.DB, error) {
 	gob.Register(models.User{})
 	gob.Register(models.Room{})
 	gob.Register(models.RoomRestriction{})
+
+	mailChan := make(chan models.MailData)
+	app.MailChan = mailChan
 
 	// change this to true when in production
 	app.InProduction = false
