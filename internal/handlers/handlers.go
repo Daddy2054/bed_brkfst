@@ -9,6 +9,7 @@ import (
 	"bed_brkfst/internal/repository"
 	"bed_brkfst/internal/repository/dbrepo"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -181,6 +182,60 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//send notifications, first to guest
+	///----
+	room, err := m.DB.GetRoomByID(restriction.RoomID)
+	if err != nil {
+		m.App.Session.Put(r.Context(), "error", "can't find room!")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		return
+	}
+
+	// res.Room.RoomName = room.RoomName
+	///---
+	htmlMessage := fmt.Sprintf(`
+		<strong>Reservation Confirmation</strong><br>
+		Dear %s: <br>
+		This is confirm your reservation for
+		%s
+		from %s to %s.
+		`, reservation.FirstName,
+		room.RoomName,
+		reservation.StartDate.Format("2006-01-02"),
+		reservation.EndDate.Format("2006-01-02"))
+
+	msg := models.MailData{
+		To:      reservation.Email,
+		From:    "me@here.com",
+		Subject: "Reservation Confirmation",
+		Content: htmlMessage,
+	}
+
+	m.App.MailChan <- msg
+	// send notification to the owner
+	htmlMessage = fmt.Sprintf(`
+			<strong>Reservation Confirmation</strong><br>
+			Dear Owner: <br>
+			This is notification that
+			%s %s
+			has successfully made a reservation for
+			%s
+			from %s to %s.
+			`, reservation.FirstName,
+		reservation.LastName,
+		room.RoomName,
+		reservation.StartDate.Format("2006-01-02"),
+		reservation.EndDate.Format("2006-01-02"))
+
+	msg = models.MailData{
+		To:      "owner@here.com",
+		From:    "me@here.com",
+		Subject: "Notification about a Reservation",
+		Content: htmlMessage,
+	}
+
+	m.App.MailChan <- msg
+
 	m.App.Session.Put(r.Context(), "reservation", reservation)
 
 	http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
@@ -256,6 +311,7 @@ func (m *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) {
 		Data: data,
 	})
 }
+
 type jsonResponse struct {
 	OK        bool   `json:"ok"`
 	Message   string `json:"message"`
