@@ -4,6 +4,7 @@ import (
 	"bed_brkfst/internal/config"
 	"bed_brkfst/internal/driver"
 	"bed_brkfst/internal/forms"
+	"bed_brkfst/internal/helpers"
 	"bed_brkfst/internal/models"
 	"bed_brkfst/internal/render"
 	"bed_brkfst/internal/repository"
@@ -206,10 +207,10 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		reservation.EndDate.Format("2006-01-02"))
 
 	msg := models.MailData{
-		To:      reservation.Email,
-		From:    "me@here.com",
-		Subject: "Reservation Confirmation",
-		Content: htmlMessage,
+		To:       reservation.Email,
+		From:     "me@here.com",
+		Subject:  "Reservation Confirmation",
+		Content:  htmlMessage,
 		Template: "basic.html",
 	}
 
@@ -480,8 +481,9 @@ func (m *Repository) ShowLogin(w http.ResponseWriter, r *http.Request) {
 		Form: forms.New(nil),
 	})
 }
-// PostShowLogin handles logging the user in. If successful, 
-// takes the user to the homepage, otherwise, 
+
+// PostShowLogin handles logging the user in. If successful,
+// takes the user to the homepage, otherwise,
 // re-renders the login page and shows an error message.
 func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 
@@ -532,14 +534,22 @@ func (m *Repository) AdminDashboard(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Repository) AdminNewReservations(w http.ResponseWriter, r *http.Request) {
+	
 	render.Template(w, r, "admin-new-reservations.page.tmpl", &models.TemplateData{})
 }
 
-
 func (m *Repository) AdminAllReservations(w http.ResponseWriter, r *http.Request) {
-	render.Template(w, r, "admin-all-reservations.page.tmpl", &models.TemplateData{})
+	reservations, err := m.DB.AllReservations()
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+	data := make(map[string]interface{})
+	data["reservations"] = reservations
+	render.Template(w, r, "admin-all-reservations.page.tmpl", &models.TemplateData{
+		Data: data,
+	})
 }
-
 
 func (m *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "admin-reservations-calendar.page.tmpl", &models.TemplateData{})
