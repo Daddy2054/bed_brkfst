@@ -457,7 +457,7 @@ func (m *postgresDBRepo) UpdateReservation(u models.Reservation) error {
 		u.Email,
 		u.Phone,
 		time.Now(),
-		// u.ID,
+		u.ID,
 	)
 
 	if err != nil {
