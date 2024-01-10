@@ -4,6 +4,7 @@ import (
 	"bed_brkfst/internal/models"
 	"context"
 	"errors"
+	"log"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -551,11 +552,20 @@ func (m *postgresDBRepo) GetRestrictionsForRoomByDate(roomID int, start, end tim
 	var restrictions []models.RoomRestriction
 
 	query := `
-		select id, coalesce(reservation_id, 0), restriction_id, room_id, start_date, end_date
-		from room_restrictions where $1 < end_date and $2 >= start_date
-		and room_id = $3
-`
-
+		SELECT 
+			id, 
+			COALESCE(reservation_id, 0), 
+			restriction_id, 
+			room_id, 
+			start_date, 
+			end_date
+		FROM 
+			room_restrictions 
+		WHERE 
+			$1 < end_date 
+		AND $2 >= start_date
+		AND	room_id = $3
+		`
 	rows, err := m.DB.QueryContext(ctx, query, start, end, roomID)
 	if err != nil {
 		return nil, err
@@ -583,4 +593,35 @@ func (m *postgresDBRepo) GetRestrictionsForRoomByDate(roomID int, start, end tim
 	}
 
 	return restrictions, nil
+}
+
+// InsertBlockForRoom inserts a room restriction
+func (m *postgresDBRepo) InsertBlockForRoom(id int, startDate time.Time) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `insert into room_restrictions (start_date, end_date, room_id, restriction_id,
+			created_at, updated_at) values ($1, $2, $3, $4, $5, $6)`
+
+	_, err := m.DB.ExecContext(ctx, query, startDate, startDate.AddDate(0, 0, 1), id, 2, time.Now(), time.Now())
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	return nil
+}
+
+// DeleteBlockByID deletes a room restriction
+func (m *postgresDBRepo) DeleteBlockByID(id int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `delete from room_restrictions where id = $1`
+
+	_, err := m.DB.ExecContext(ctx, query, id)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	return nil
 }
