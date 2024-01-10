@@ -505,7 +505,15 @@ func (m *postgresDBRepo) AllRooms() ([]models.Room, error) {
 
 	var rooms []models.Room
 
-	query := `select id, room_name, created_at, updated_at from rooms order by room_name`
+	query := `
+		SELECT 
+			id, 
+			room_name, 
+			created_at, 
+			updated_at 
+		FROM rooms 
+		ORDER by room_name
+		`
 
 	rows, err := m.DB.QueryContext(ctx, query)
 	if err != nil {
