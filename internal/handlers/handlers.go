@@ -631,10 +631,20 @@ func (m *Repository) AdminPostShowReservation(w http.ResponseWriter, r *http.Req
 		helpers.ServerError(w, err)
 		return
 	}
-	m.App.Session.Put(r.Context(), "flash", "Changes saved")
-	http.Redirect(w, r, fmt.Sprintf("/admin/reservations-%s", src), http.StatusSeeOther)
-}
 
+	month := r.Form.Get("month")
+	year := r.Form.Get("year")
+
+	m.App.Session.Put(r.Context(), "flash", "Changes saved")
+
+	if year == "" {
+
+		http.Redirect(w, r, fmt.Sprintf("/admin/reservations-%s", src), http.StatusSeeOther)
+	} else {
+		http.Redirect(w, r, fmt.Sprintf("/admin/reservations-calendar?y=%s&m=%s", year, month), http.StatusSeeOther)
+
+	}
+}
 
 // AdminReservationsCalendar displays the reservation calendar
 func (m *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Request) {
@@ -650,8 +660,8 @@ func (m *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Re
 	data := make(map[string]interface{})
 	data["now"] = now
 
-	next := now.AddDate(0, 1, 0)	// next month
-	last := now.AddDate(0, -1, 0)	// last month
+	next := now.AddDate(0, 1, 0)  // next month
+	last := now.AddDate(0, -1, 0) // last month
 
 	nextMonth := next.Format("01")
 	nextMonthYear := next.Format("2006")
@@ -710,7 +720,7 @@ func (m *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Re
 				}
 			} else {
 				// it's a block
-				blockMap[y.StartDate.Format("2006-01-2")] = y.ID	
+				blockMap[y.StartDate.Format("2006-01-2")] = y.ID
 			}
 		}
 		data[fmt.Sprintf("reservation_map_%d", x.ID)] = reservationMap
